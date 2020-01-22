@@ -1,0 +1,20 @@
+ec2s3:
+  web:             # this is the name of the VM's role: web, app, etc.
+    s3_bucket: testing-bucket.kumul.us  # Bucket where settings script is stored
+    s3_path: ws2012-sandbox/adjust.ps1  # Path where settings script is stored within bucket
+    describe_port: 8080
+    describe_endpoint: 'describe.json'
+    describe_encoding: utf-16-le
+    encoder:
+      name: dotnet
+      settings:
+        UriEnableCache: 
+          default: 1
+        UriScavengerPeriod: 
+          default: 120
+          min: 10
+          max: 600
+        WebConfigCacheEnabled:
+          default: 0
+        WebConfigEnableKernelCache:
+          default: 1
