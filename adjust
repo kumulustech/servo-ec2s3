@@ -6,6 +6,7 @@ import time
 import io
 import requests
 import socket # for handling timeout
+import subprocess
 import sys
 import codecs # Used for handling utf16 le BOM
 import re
@@ -45,7 +46,7 @@ class Ec2S3Driver(Adjust):
     def check_config(config):
         if not os.path.isdir('/root/.aws') \
         and not os.path.isdir('{}/.aws'.format(os.path.expanduser('~'))) \
-        and not os.popen("curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/").read():
+        and not subprocess.run(['curl', '-s', 'http://169.254.169.254/latest/meta-data/iam/security-credentials/'], stdout=subprocess.PIPE).stdout:
             assert os.environ.get('AWS_ACCESS_KEY_ID', '') != '' and os.environ.get('AWS_SECRET_ACCESS_KEY', '') != '', \
                 'No Amazon S3 access key was provided. Please refer to README.md.'
             assert os.environ.get('AWS_DEFAULT_REGION', '') != '', \
