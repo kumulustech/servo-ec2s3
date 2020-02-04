@@ -3,7 +3,8 @@ import pytest
 import sys
 import json
 import io
-import importlib
+import types
+import importlib.machinery
 
 from adjust_driver import Ec2S3Driver, DESC, HAS_CANCEL, VERSION
 
@@ -80,7 +81,12 @@ def test_validate(monkeypatch, requests_mock):
                 content=describe_endpoint_resp_text_bytes
             )
 
-        validator = importlib.import_module('adjust_driver').get_validator.__func__()
+        # dynamic import which supports files without the ".py" extension
+        loader = importlib.machinery.SourceFileLoader('validation_driver', 'adjust_driver.py')
+        mod = types.ModuleType(loader.name)
+        loader.exec_module(mod)
+        validator = mod.get_validator.__func__()
+        
 
         result = validator(
             component_key='web',

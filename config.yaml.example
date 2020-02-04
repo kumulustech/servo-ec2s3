@@ -1,0 +1,21 @@
+---
+ec2s3:
+  web:  # this is the name of the VM's role: web, app, etc.
+    s3_bucket: bucket.name.here  # Bucket where settings script is stored
+    s3_path: path-to/adjust.ps1  # Path where settings script is stored within bucket
+    describe_port: 8080                 # Port on which the describe endpoint is exposed
+    describe_endpoint: 'describe.json'  # Path used to retrieve describe endpoint data from hosts
+    describe_encoding: utf-16           # Encoding of describe endpoint data
+    encoder:
+      name: dotnet
+      settings:
+        UriEnableCache: 
+          default: 1
+        UriScavengerPeriod: 
+          default: 120
+          min: 10
+          max: 600
+        WebConfigCacheEnabled:
+          default: 0
+        WebConfigEnableKernelCache:
+          default: 1

@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
-import base64
-import collections
+import codecs
 import os
-import time
-import io
 import requests
-import socket # for handling timeout
 import subprocess
-import sys
-import codecs # Used for handling utf16 le BOM
-import re
+import time
 
-import yaml
 import boto3 # AWS SDK
+import yaml
 
 from adjust import Adjust
 
@@ -198,16 +192,6 @@ class Ec2S3Driver(Adjust):
             
             raw_data = describe_resp.content
             encoding = self.config[CONFIG_KEY][component_key].get('describe_encoding', 'utf-8')
-            if encoding and encoding.startswith('utf-16'): # assuming all utf-16 payloads will include BOM
-                if raw_data.startswith(codecs.BOM_UTF16_LE):
-                    raw_data = raw_data[len(codecs.BOM_UTF16_LE):] # remove BOM
-                elif raw_data.startswith(codecs.BOM_UTF16_BE):
-                    raw_data = raw_data[len(codecs.BOM_UTF16_BE):] # remove BOM
-                else: 
-                    # no BOM is treated as not ready with utf-16
-                    failed_instances.append(i["InstanceId"])
-                    continue
-                
             describe_data = raw_data.decode(encoding)
 
             # The failures we're concerned with here-in are limited to deployment issues such as 500 error codes and the json never being available

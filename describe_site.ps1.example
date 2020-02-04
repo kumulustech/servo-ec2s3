@@ -1,0 +1,31 @@
+# Note: these steps should be run prior to first describe.ps1 execution. Also assumes IIS is already installed in system drive
+Import-Module WebAdministration
+
+New-Item -ItemType directory -Path "$env:systemdrive\inetpub\describe-website"
+
+New-WebAppPool -name "DescribeAppPool"  -force # optional, can reside in any pool
+
+$describeSite = $describeSite = New-WebSite `
+    -Name DescribeSite `
+    -Port 8080 `
+    -IPAddress $(Get-NetIpAddress -AddressFamily IPv4 | Select-Object -first 1 -ExpandProperty IPAddress) `
+    -PhysicalPath "$env:systemdrive\inetpub\describe-website" `
+    -ApplicationPool "DescribeAppPool"
+
+# allow serving of json
+Add-WebConfigurationProperty `
+    -PSPath $describeSite.pspath  `
+    -Filter system.webServer/staticContent `
+    -Name "." `
+    -Value @{
+        fileExtension='.json';
+        mimeType='application/json'
+    }
+    
+# Create inbound firewall rule for servo describe access
+New-NetFirewallRule `
+    -DisplayName "HTTP describe access" `
+    -Direction Inbound `
+    -Action Allow `
+    -Protocol TCP `
+    -LocalPort 8080
