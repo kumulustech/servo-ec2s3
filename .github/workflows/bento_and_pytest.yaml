@@ -21,12 +21,12 @@ jobs:
       working-directory: ./test
       run: |
         cp ../adjust ./adjust_driver.py
-        wget --remote-name https://raw.githubusercontent.com/opsani/servo/master/adjust.py
+        curl --remote-name https://raw.githubusercontent.com/opsani/servo/master/adjust.py
         mkdir encoders
     - name: Setup test encoders folder
       working-directory: ./test/encoders
       run: |
-        wget --remote-name-all \
+        curl --remote-name-all \
         https://raw.githubusercontent.com/opsani/servo/master/encoders/base.py \
         https://raw.githubusercontent.com/kumulustech/encoder-dotnet/master/encoders/dotnet.py
     - name: Lint with Bento
