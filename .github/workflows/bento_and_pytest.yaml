@@ -33,7 +33,7 @@ jobs:
       run: |
         pip install bento-cli
         bento --agree --email=test@test.com init
-        bento --agree --email=test@test.com check --all 2>&1 | cat
+        bento --agree --email=test@test.com check --all 2>&1
     - name: Test with pytest
       run: |
         pip install pytest
