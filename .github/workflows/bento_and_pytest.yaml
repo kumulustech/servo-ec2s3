@@ -15,8 +15,8 @@ jobs:
         python-version: 3.8
     - name: Install dependencies
       run: |
-        python -m pip3 install --upgrade pip3
-        pip3 install -r requirements.txt
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
     - name: Setup test folder
       working-directory: ./test
       run: |
@@ -31,10 +31,10 @@ jobs:
         https://raw.githubusercontent.com/kumulustech/encoder-dotnet/master/encoders/dotnet.py
     - name: Lint with Bento
       run: |
-        pip3 install bento-cli
+        pip install bento-cli
         bento --agree --email=test@test.com init
         bento --agree --email=test@test.com check --all 2>&1 | cat
     - name: Test with pytest
       run: |
-        pip3 install pytest
+        pip install pytest
         pytest
