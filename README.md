@@ -14,23 +14,28 @@ When `describe_endpoint` is used with the dotnet encoder, the endpoint is expect
 
 ## Required IAM Permissions
 
-All hosts that reference the config file should have an IAM role (instance profile) configured with a policy to allow read only access to the desired bucket path. For example:
+All hosts that reference the config file should have an IAM role (instance profile) configured with a policy to allow read only access for the contents of the folder containing the adjust file in addition to any other setup files (eg. describe_site.ps1, describe.ps1, etc.). In order to use Copy-S3Object from the user_data example, the ListBucket permission will also be needed but can be restricted to a specific path as shown in the following example:
 
-```
+```json
 {
     "Version": "2012-10-17",
     "Statement": [
         {
             "Sid": "VisualEditor0",
             "Effect": "Allow",
-            "Action": [
-                "s3:Get*",
-                "s3:List*"
-            ],
-            "Resource": [
-                "arn:aws:s3:::example-bucket.example.com/ws2012-sandbox/*",
-                "arn:aws:s3:::example-bucket.example.com"
-            ]
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::example-bucket.example.com/ws2012-sandbox/*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "s3:ListBucket",
+            "Resource": "arn:aws:s3:::example-bucket.example.com",
+            "Condition": {
+                "ForAllValues:StringLike": {
+                    "s3:prefix": "ws2012-sandbox/*"
+                }
+            }
         }
     ]
 }
@@ -42,6 +47,16 @@ S3 Permissions; Applied to the adjust file in s3 to facilitate updating and pars
 
 - s3:PutObject
 - s3:GetObject
+- s3:ListBucket
+  - note: without the ListBucket permission, the servo driver will be unable to discern if the file does not exist as AWS will return AccessDenied in such cases. However, this permission must be applied at the bucket level. Therefore it is recommended to use the following condition to restrict the permission only to requests pertaining to the adjust file
+
+    ```json
+    "Condition": {
+                "ForAllValues:StringLike": {
+                    "s3:prefix": "ws2012-sandbox/adjust.ps1"
+        }
+    }
+    ```
 
 ## Installation (encoder-dotnet)
 

@@ -104,13 +104,13 @@ class Ec2S3Driver(Adjust):
             try:
                 response = self.s3.get_object(Bucket=component_conf['s3_bucket'], Key=component_conf['s3_path'])
                 describe_string = response['Body'].read().decode('utf-8')
-            except Exception as e:
+            except self.s3.exceptions.NoSuchKey as e:
                 self.print_json_error(
                     e.__class__.__name__,
                     "failure",
                     str(e)
                 )
-                continue
+                describe_string = ''
 
             retVal['application']['components'][component_key] = { 'settings': 
                 self.encode_describe_if_needed(None, component_conf, describe_string)
