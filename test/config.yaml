@@ -1,7 +1,7 @@
 ec2s3:
-  web:             # this is the name of the VM's role: web, app, etc.
-    s3_bucket: testing-bucket.kumul.us  # Bucket where settings script is stored
-    s3_path: ws2012-sandbox/adjust.ps1  # Path where settings script is stored within bucket
+  web:
+    s3_bucket: testing-bucket.kumul.us
+    s3_path: servo-ec2s3-ci/adjust.ps1
     describe_port: 8080
     describe_endpoint: 'describe.json'
     describe_encoding: utf-16
